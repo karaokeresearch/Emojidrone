@@ -266,10 +266,9 @@ var loadInstrument = function() {
 				};
 				(function(hp, kay) { //stupid closures because javascript was designed by genius morons. 
 
-					$(document.body).queue("audioLoad", function(next) { //if we load the sounds sequentially, it uses 75% less bandwidth
-						hp.onload = next;
-						sound[kay] = new Howl(hp);
-					});
+					sound[kay] = new Howl(hp);
+					if (hp.onload) hp.onload(); // Manually run the next step
+
 				})(howlParams, k);
 
 
@@ -281,10 +280,9 @@ var loadInstrument = function() {
 				};
 				(function(hp, kay) {
 
-					$(document.body).queue("audioLoad", function(next) {
-						hp.onload = next;
-						sound[kay] = new Howl(hp);
-					});
+					sound[kay] = new Howl(hp);
+					if (hp.onload) hp.onload(); // Manually run the next step
+
 				})(howlParams, k);
 
 
