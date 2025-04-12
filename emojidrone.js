@@ -419,15 +419,8 @@ $(document).ready(function() { //let's do this!
 	console.log("ready!");
 	
 	
-	$('body').click(function(e) {
-    var target = $(e.target);
-    console.log(target);
-    if(target.is('#gridzone')) {
-        toggleSettings();
-    }
-});
 
-	$
+	
 	//let's load some instruments!
 	loadInstrument();
 	loadEmoji($("#emojiset").val());
@@ -465,36 +458,69 @@ $("#fullscreen").click(function(event) {
 		
 		
 
-
-	$(document).on('keydown', function(event) { //key is pressed
-		
-		if (document.activeElement.tagName == "BODY") {
-			event.preventDefault();
-		}
-
-
-
-		var actualKey = (event.which);
-
-		if (keyMap[actualKey] > -1) {
-			embiggen(keyMap[actualKey]);
-			sound[keyMap[actualKey]].play();
-			//console.log(sound[keyMap[actualKey]]._src); //log instrument name		
-		}
-
-	  if (instructionsVisible==true){
-	
-  		$("#instructions").animate({opacity: 0},2000);
- 	 		setTimeout(function() {
-	 		$("#instructions").css("display", "none");		
-			},2000);
-	
-			//$("#instructions").css("visibility", "hidden");		
-			instructionsVisible=false;
-		}
-
-	});
-
+		const keyTriggerGrid = [
+			'1','2','3','4','5','6','7','8','9','0',
+			'q','w','e','r','t','y','u','i','o','p',
+			'a','s','d','f','g','h','j','k','l',';',
+			'z','x','c','v','b','n','m',',','.','/'
+		  ];
+		  
+		  const cols_qwerty = 10;
+		  const rows_qwerty = 4;
+		  
+		  // Shared logic
+		  function handleInputFromKeyCode(actualKey) {
+			if (keyMap[actualKey] > -1) {
+			  embiggen(keyMap[actualKey]);
+			  sound[keyMap[actualKey]].play();
+			  //console.log(sound[keyMap[actualKey]]._src); //log instrument name		
+			}
+		  
+			if (instructionsVisible === true) {
+			  $("#instructions").animate({opacity: 0}, 2000);
+			  setTimeout(() => {
+				$("#instructions").css("display", "none");
+			  }, 2000);
+			  instructionsVisible = false;
+			}
+		  }
+		  
+		  // Keydown logic
+		  $(document).on('keydown', function(event) {
+			if (document.activeElement.tagName === "BODY") {
+			  event.preventDefault();
+			}
+		  
+			const actualKey = event.which;
+			handleInputFromKeyCode(actualKey);
+		  });
+		  
+		  // Touch logic
+		  document.addEventListener('touchstart', function(e) {
+			const touch = e.touches[0];
+			const clientX = touch.clientX;
+			const clientY = touch.clientY;
+		  
+			const col = Math.floor(clientX / window.innerWidth * cols_qwerty);
+			const row = Math.floor(clientY / window.innerHeight * rows_qwerty);
+			const index = row * cols_qwerty + col;
+		  
+			const char = keyTriggerGrid[index];
+			if (!char) return;
+		  
+			const specialMap = {
+			  ';': 186,
+			  ',': 188,
+			  '.': 190,
+			  '/': 191
+			};
+		  
+			const keyCode = specialMap[char] || char.toUpperCase().charCodeAt(0);
+			handleInputFromKeyCode(keyCode);
+		  
+			e.preventDefault();
+		  }, { passive: false });
+		  
 
 
 	if (document.addEventListener) { //trigger if fullscreen happens

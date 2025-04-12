@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Invisible QWERTY Grid</title>
+  <style>
+    html, body {
+      margin: 0;
+      height: 100%;
+      overflow: hidden;
+      background: repeating-linear-gradient(
+        45deg,
+        #ffccff,
+        #ffccff 50px,
+        #ccffff 50px,
+        #ccffff 100px
+      );
+      font-family: sans-serif;
+      touch-action: none; /* Prevents double-tap zoom & scrolling on mobile */
+    }
+
+    body::before {
+      content: '😜😜😜😜😜😜😜😜😜😜';
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 25vw;
+      pointer-events: none;
+      opacity: 0.15;
+      z-index: 0;
+    }
+  </style>
+</head>
+<body>
+
+<script>
+  const keys = [
+    '1','2','3','4','5','6','7','8','9','0',
+    'q','w','e','r','t','y','u','i','o','p',
+    'a','s','d','f','g','h','j','k','l',';',
+    'z','x','c','v','b','n','m',',','.','/'
+  ];
+
+  const cols = 10;
+  const rows = 4;
+
+  document.addEventListener('touchstart', (e) => {
+    const touch = e.touches[0];
+    const clientX = touch.clientX;
+    const clientY = touch.clientY;
+
+    const col = Math.floor(clientX / window.innerWidth * cols);
+    const row = Math.floor(clientY / window.innerHeight * rows);
+    const index = row * cols + col;
+
+    const key = keys[index];
+    if (key) console.log(key);
+
+    e.preventDefault(); // Prevent default browser behavior (zooming, scrolling, etc.)
+  }, { passive: false });
+</script>
+
+</body>
+</html>
