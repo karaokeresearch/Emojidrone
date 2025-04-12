@@ -1,6 +1,6 @@
 /*
     Emojidrone
-    Copyright (C) 2017  Ross Brackett
+    Copyright (C) 2017-2025  Ross Brackett
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -34,7 +34,19 @@ var tuna;
 var category = {};
 var instructionsVisible=true;
 
+function hideInstructions(){
+	$("#instructions").animate({opacity: 0}, 2000);
+	setTimeout(() => {
+	  $("#instructions").css("display", "none");
+	}, 2000);
+	instructionsVisible = false;
+}
 
+
+function isMobileDevice() {
+	return typeof window.orientation !== "undefined" || /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  }
+  
 
 var embiggen = function(kNum) { //key has been pressed, make it big.
 	var leftRandom;
@@ -477,11 +489,7 @@ $("#fullscreen").click(function(event) {
 			}
 		  
 			if (instructionsVisible === true) {
-			  $("#instructions").animate({opacity: 0}, 2000);
-			  setTimeout(() => {
-				$("#instructions").css("display", "none");
-			  }, 2000);
-			  instructionsVisible = false;
+				hideInstructions();
 			}
 		  }
 		  
@@ -530,7 +538,38 @@ $("#fullscreen").click(function(event) {
 		document.addEventListener('MSFullscreenChange', exitHandler, false);
 	}
 
+	const instructionsDiv = document.getElementById('instructions');
 
+	if (isMobileDevice()) {
+	  instructionsDiv.innerHTML = `
+		<span style="font-size:5vh">Tap to play</span>
+		<br><br><br>
+		<span id="instructions2" style="font-size:2vh"></span>
+	  `;
+	} else {
+	  instructionsDiv.innerHTML = `
+		<span style="font-size:5vh">Type to play</span>
+		<br><br><br>
+		<span id="instructions2" style="font-size:2vh">click for settings</span>
+	  `;
+  
+	  // Add click listener for desktop
+	  
+	$('body').click(function(e) {
+     var target = $(e.target);
+     console.log(target);
+     if(target.is('#gridzone')) {//the background
+         toggleSettings();
+     }
+	 if (instructionsVisible === true) {
+		hideInstructions();
+		toggleSettings();
+	}
+
+ 	});
+
+
+	}
 
 
 });
